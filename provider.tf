@@ -5,7 +5,7 @@ provider "google" {
 
 terraform {
   backend "gcs" {
-    bucket = "creativedreams-307311-tfstate"
+    bucket = "development-337317-tfstate"
     prefix = "terraform/state"
   }
 }
