@@ -1,5 +1,5 @@
 resource "google_storage_bucket" "bucket" {
-  name     = "${var.dev-env}workflow-bucket-random-1"
+  name     = "${var.dev-env}-workflow-bucket-random-1"
   location = "europe-west2"
 }
 
