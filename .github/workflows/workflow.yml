@@ -198,7 +198,7 @@ jobs:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         # Generates an execution plan for Terraform
     - name: Preparing to destroy
-      run: echo "Running Terraform Destroy in PRODUCTION"
+      run: echo "Executing Terraform Destroy in PRODUCTION"
     - name: Terraform Destroy
       id: destroy
       run: terraform destroy -auto-approve
