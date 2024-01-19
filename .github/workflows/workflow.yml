@@ -11,7 +11,6 @@ on:
         required: true
     release:
         types: [ published ]
-    workflow_dispatch:
         inputs:
             releaseType:
                 description: 'Where to release (dev, staging or prod)?'
