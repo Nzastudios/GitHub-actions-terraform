@@ -9,11 +9,21 @@ on:
     secrets:
       GOOGLE_CREDENTIALS:
         required: true
-
+    release:
+        types: [ published ]
+    workflow_dispatch:
+        inputs:
+            releaseType:
+                description: 'Where to release (dev, staging or prod)?'
+                required: true
+                default: dev
 env:
   DEV_ENVIRON: dev
   STAGE_ENVIRON: stage
   PROD_ENVIRON: prod
+  DEV_STAGE: "development"
+  STAGING_STAGE: "staging"
+  PROD_STAGE: "production"
 
 jobs:
   development-terraform:
