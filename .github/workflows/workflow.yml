@@ -19,7 +19,7 @@ env:
   PROD_STAGE: "production"
 
 jobs:
-  development-terraform:
+  development:
     if: github.event.inputs.releaseType == 'development'
     name: 'Deploy to Terraform to Development Environment'
     runs-on: ubuntu-latest
@@ -81,14 +81,14 @@ jobs:
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
   
-  staging-terraform:
+  staging:
     if: github.event.inputs.releaseType == 'staging'
     name: 'Deploy to Terraform to Staging Environment'
     runs-on: ubuntu-latest
     environment:
       name: staging
       url: https://github.com
-    needs: [ development-terraform ]
+    needs: [ development ]
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
@@ -143,14 +143,14 @@ jobs:
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-  production-terraform:
+  production:
     if: github.event.inputs.releaseType == 'prod'
     name: 'Deploy to Terraform to Production Environment'
     runs-on: ubuntu-latest
     environment:
       name: production
       url: https://github.com
-    needs: [ staging-terraform ]
+    needs: [ staging ]
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
