@@ -57,10 +57,11 @@ jobs:
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
       run: terraform fmt -check
-
+    - name: Running plan with -lock=false
+      run: echo "Running plan with -lock=false"
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -var="dev-env=${{ env.DEV_ENVIRON }}"
+      run: terraform plan -var="dev-env=${{ env.DEV_ENVIRON }} -lock=false"
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         
