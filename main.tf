@@ -1,9 +1,9 @@
 resource "google_storage_bucket" "bucket" {
-  name     = "workflow-bucket-random-001122-22"
+  name     = "${var.dev-env}-workflow-bucket-random-1"
   location = "europe-west2"
 }
 
 resource "google_storage_bucket" "gcs_bucket" {
-  name     = "${var.dev-env}-bucket-random-00112323"
+  name     = "${var.dev-env}-workflow-bucket-random-2"
   location = "europe-west2"
 }
