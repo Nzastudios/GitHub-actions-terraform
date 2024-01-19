@@ -1,14 +1,14 @@
 name: 'Terraform Nzastudios CICD'
 
 on:
-  push:
-    branches:
-    - main
-  pull_request:
-  workflow_call:
-    secrets:
-      GOOGLE_CREDENTIALS:
-        required: true
+    release:
+        types: [ published ]
+    workflow_dispatch:
+        inputs:
+            releaseType:
+                description: 'Where to release (dev, staging or prod)?'
+                required: true
+                default: dev
 
 env:
   DEV_ENVIRON: dev
@@ -21,7 +21,7 @@ env:
 jobs:
   development:
     if: github.event.inputs.releaseType == 'development'
-    name: 'Deploy to Terraform to Development Environment'
+    name: 'Development-Terraform'
     runs-on: ubuntu-latest
     environment:
       name: development
@@ -83,7 +83,7 @@ jobs:
   
   staging:
     if: github.event.inputs.releaseType == 'staging'
-    name: 'Deploy to Terraform to Staging Environment'
+    name: Staging-Terraform
     runs-on: ubuntu-latest
     environment:
       name: staging
@@ -145,7 +145,7 @@ jobs:
 
   production:
     if: github.event.inputs.releaseType == 'prod'
-    name: 'Deploy to Terraform to Production Environment'
+    name: Production-Terraform
     runs-on: ubuntu-latest
     environment:
       name: production
