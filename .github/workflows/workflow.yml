@@ -88,7 +88,7 @@ jobs:
     environment:
       name: staging
       url: https://github.com
-    needs: [ development ]
+    needs: [ development-terraform ]
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
@@ -150,7 +150,7 @@ jobs:
     environment:
       name: production
       url: https://github.com
-    needs: [ staging ]
+    needs: [ staging-terraform ]
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
