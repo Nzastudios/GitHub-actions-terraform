@@ -1,16 +1,9 @@
 name: 'Terraform Nzastudios CICD'
 
 on:
-  push:
-    branches:
-    - main
-  pull_request:
-  workflow_call:
-    secrets:
-      GOOGLE_CREDENTIALS:
-        required: true
     release:
         types: [ published ]
+    workflow_dispatch:
         inputs:
             releaseType:
                 description: 'Where to release (dev, staging or prod)?'
