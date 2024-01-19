@@ -4,13 +4,19 @@ on:
   push:
     branches:
     - main
-    - staging
-    - production
+
   pull_request:
   workflow_call:
     secrets:
       GOOGLE_CREDENTIALS:
         required: true
+#  https://rtfm.co.ua/en/github-actions-deploying-dev-prod-environments-with-terraform/
+  workflow_dispatch:
+          inputs:
+            confirm-deploy:
+              type: boolean
+              required: true
+              description: "Set to confirm deploy to the PRODUCTION environment"
 
 env:
   DEV_ENVIRON: dev
@@ -196,7 +202,8 @@ jobs:
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
       # if: github.event.pull_request.merged && github.event_name == 'push'
-      if: github.ref == 'refs/heads/production' && github.event_name == 'push' && github.event.review.state == 'approved'
+      # if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.event.review.state == 'approved'
+      if: github.event.review.state == 'approved' && github.event.inputs.confirm-deploy == 'true'
       run: terraform apply -auto-approve
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
