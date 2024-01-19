@@ -1,14 +1,14 @@
 name: 'Terraform Nzastudios CICD'
 
 on:
-    release:
-        types: [ published ]
-    workflow_dispatch:
-        inputs:
-            releaseType:
-                description: 'Where to release (dev, staging or prod)?'
-                required: true
-                default: dev
+  push:
+    branches:
+    - main
+  pull_request:
+  workflow_call:
+    secrets:
+      GOOGLE_CREDENTIALS:
+        required: true
 
 env:
   DEV_ENVIRON: dev
@@ -20,7 +20,7 @@ env:
 
 jobs:
   development:
-    if: github.event.inputs.releaseType == 'development'
+    # if: github.event.inputs.releaseType == 'development'
     name: 'Development-Terraform'
     runs-on: ubuntu-latest
     environment:
@@ -82,7 +82,7 @@ jobs:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
   
   staging:
-    if: github.event.inputs.releaseType == 'staging'
+    # if: github.event.inputs.releaseType == 'staging'
     name: Staging-Terraform
     runs-on: ubuntu-latest
     environment:
@@ -130,7 +130,7 @@ jobs:
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
       run: terraform apply -auto-approve
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
@@ -144,7 +144,7 @@ jobs:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
 
   production:
-    if: github.event.inputs.releaseType == 'prod'
+    # if: github.event.inputs.releaseType == 'prod'
     name: Production-Terraform
     runs-on: ubuntu-latest
     environment:
@@ -192,7 +192,7 @@ jobs:
       # On push to main, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      if: github.ref == 'refs/heads/production' && github.event_name == 'push'
       run: terraform apply -auto-approve
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
