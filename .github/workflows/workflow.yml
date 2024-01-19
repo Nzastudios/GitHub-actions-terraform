@@ -12,12 +12,12 @@ on:
         required: true
 #  https://rtfm.co.ua/en/github-actions-deploying-dev-prod-environments-with-terraform/
 
-  workflow_dispatch:
-          inputs:
-            confirm-deploy:
-              type: boolean
-              required: true
-              description: "Set to confirm deploy to the PRODUCTION environment"
+  # workflow_dispatch:
+  #         inputs:
+  #           confirm-deploy:
+  #             type: boolean
+  #             required: true
+  #             description: "Set to confirm deploy to the PRODUCTION environment"
 
 env:
   DEV_ENVIRON: dev
