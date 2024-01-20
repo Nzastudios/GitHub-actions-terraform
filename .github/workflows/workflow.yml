@@ -67,7 +67,7 @@ jobs:
     - name: Terraform Format
       run: terraform fmt -check
     - name: Running plan with -lock=false
-      run: echo "Running plan with -lock=false"
+      run: echo "Running plan with -lock=true"
     # Generates an execution plan for Terraform
     - name: Terraform Plan
       run: terraform plan -var="dev-env=${{ env.DEV_ENVIRON }} -lock=true"
@@ -132,7 +132,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform plan -var="stage-env=${{ env.STAGE_ENVIRON }} -lock=false"
+      run: terraform plan -var="stage-env=${{ env.STAGE_ENVIRON }} -lock=true"
       env:
         GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
         
