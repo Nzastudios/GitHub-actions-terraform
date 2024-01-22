@@ -29,6 +29,11 @@ env:
 
 jobs:
   development:
+  # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     # if: github.event.inputs.releaseType == 'development'
     name: 'Development-Terraform'
     runs-on: ubuntu-latest
@@ -54,9 +59,11 @@ jobs:
     #  https://www.youtube.com/watch?v=ZgVhU5qvK1M
       name: 'Authenticate to Google Cloud'
       uses: google-github-actions/auth@v0.4.0
+      
       with:
         # credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-        workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
+        # workload_identity_provider: '${{ secrets.WIF_PROVIDER_JSON }}'
+        workload_identity_provider: '${{ secrets.WIF_PROVIDER_JSON }}'
         service_account: '${{ secrets.SA_EMAIL }}'
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
