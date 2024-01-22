@@ -57,7 +57,7 @@ jobs:
 
     - id: 'auth'
     #  https://www.youtube.com/watch?v=ZgVhU5qvK1M
-      name: 'Authenticate to Google Cloud'
+      name: 'Authenticate using Google Workload Identity Provider'
       uses: google-github-actions/auth@v0.4.0
       
       with:
