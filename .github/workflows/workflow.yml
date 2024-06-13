@@ -10,6 +10,8 @@ on:
     secrets:
       GOOGLE_CREDENTIALS:
         required: true
+
+
 #  https://rtfm.co.ua/en/github-actions-deploying-dev-prod-environments-with-terraform/
 
   # workflow_dispatch:
@@ -37,6 +39,9 @@ jobs:
     # if: github.event.inputs.releaseType == 'development'
     name: 'Development-Terraform'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
     environment:
       name: development
       url: https://github.com
@@ -50,6 +55,12 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
+
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
 
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
@@ -75,6 +86,15 @@ jobs:
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
       run: terraform fmt -check
+
+    - name: "Terraform Checkov Validate"
+      run: terraform validate
+
+    - name: Test with Checkov
+      run: |
+        pip install checkov
+        checkov -d .
+
     - name: Running plan with -lock=false
       run: echo "Running plan with -lock=true"
     # Generates an execution plan for Terraform
