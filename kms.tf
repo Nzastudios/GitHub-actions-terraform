@@ -5,16 +5,16 @@
 
 resource "google_kms_key_ring" "crypto-ndr-keyring" {
   name     = "corelightx-lab-key"
-  project     = var.project_id
+  project  = var.project_id
   location = "global"
 }
 
 resource "google_kms_crypto_key" "crypto-ndr-key" {
-  name            = "cryptox-lab-keyring"
-  key_ring        = google_kms_key_ring.crypto-ndr-keyring.id
+  name     = "cryptox-lab-keyring"
+  key_ring = google_kms_key_ring.crypto-ndr-keyring.id
   #rotation_period = "100000s"
-  purpose  = "ASYMMETRIC_SIGN"  
-  
+  purpose = "ASYMMETRIC_SIGN"
+
   # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key#algorithm
 
   lifecycle {
@@ -23,24 +23,24 @@ resource "google_kms_crypto_key" "crypto-ndr-key" {
   # https://cloud.google.com/kms/docs/reference/rest/v1/CryptoKeyVersionAlgorithm
   # https://cloud.google.com/kms/docs/algorithms?authuser=2
   version_template {
-    algorithm = "EC_SIGN_P384_SHA384"
+    algorithm        = "EC_SIGN_P384_SHA384"
     protection_level = "HSM"
   }
 }
 
 resource "google_project_iam_member" "iam_encrypt_decrypt" {
-  project     = var.project_id
-  role         = "roles/cloudkms.cryptoKeyEncrypter"
-  member = "serviceAccount:terraform-jenkins@development-337317.iam.gserviceaccount.com"
- }
+  project = var.project_id
+  role    = "roles/cloudkms.cryptoKeyEncrypter"
+  member  = "serviceAccount:terraform-jenkins@development-337317.iam.gserviceaccount.com"
+}
 
 resource "google_kms_crypto_key_iam_binding" "key_iam_binding" {
   crypto_key_id = resource.google_kms_crypto_key.crypto-ndr-key.id
-  role         = "roles/cloudkms.cryptoKeyEncrypter"
-members = [
+  role          = "roles/cloudkms.cryptoKeyEncrypter"
+  members = [
     "serviceAccount:terraform-jenkins@development-337317.iam.gserviceaccount.com",
-]
- }
+  ]
+}
 
 
 
