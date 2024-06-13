@@ -69,7 +69,7 @@ jobs:
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init -reconfigure
-      with:
+      env:
         workload_identity_provider: '${{ secrets.WIF_PROVIDER_JSON }}'
 
     # Checks that all Terraform configuration files adhere to a canonical format
