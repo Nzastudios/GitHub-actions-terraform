@@ -1,0 +1,227 @@
+name: 'Terraform Nzastudios CICD'
+
+on:
+  push:
+    branches:
+    - main
+
+  pull_request:
+  workflow_call:
+    secrets:
+      GOOGLE_CREDENTIALS:
+        required: true
+#  https://rtfm.co.ua/en/github-actions-deploying-dev-prod-environments-with-terraform/
+
+  # workflow_dispatch:
+  #         inputs:
+  #           confirm-deploy:
+  #             type: boolean
+  #             required: true
+  #             description: "Set to confirm deploy to the PRODUCTION environment"
+
+env:
+  DEV_ENVIRON: dev
+  STAGE_ENVIRON: stage
+  PROD_ENVIRON: prod
+  DEV_STAGE: "development"
+  STAGING_STAGE: "staging"
+  PROD_STAGE: "production"
+
+jobs:
+  development:
+  # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    # if: github.event.inputs.releaseType == 'development'
+    name: 'Development-Terraform'
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: https://github.com
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - id: 'auth'
+    #  https://www.youtube.com/watch?v=ZgVhU5qvK1M
+      name: 'Authenticate using Google Workload Identity Provider'
+      uses: google-github-actions/auth@v0.4.0
+      
+      with:
+        # credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+        # workload_identity_provider: '${{ secrets.WIF_PROVIDER_JSON }}'
+        workload_identity_provider: '${{ secrets.WIF_PROVIDER_JSON }}'
+        service_account: '${{ secrets.SA_EMAIL }}'
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init -reconfigure
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -check
+    - name: Running plan with -lock=false
+      run: echo "Running plan with -lock=true"
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -var="dev-env=${{ env.DEV_ENVIRON }} -lock=true"
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+      # https://stackoverflow.com/questions/60710209/trigger-github-actions-only-when-pr-is-merged
+    - name: Terraform Apply
+      if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+      # if: github.ref == 'refs/heads/development' && github.event_name == 'push' && github.event.review.state == 'approved'
+      run: terraform apply -auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        # Generates an execution plan for Terraform
+    - name: Preparing to destroy
+      run: echo "Running Terraform Destroy in DEVELOPENT"
+    - name: Terraform Destroy
+      id: destroy
+      run: terraform destroy -auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+  
+  staging:
+    # if: github.event.inputs.releaseType == 'staging'
+    name: Staging-Terraform
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+      url: https://github.com
+    needs: [ development ]
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - id: 'auth'
+    
+      name: 'Authenticate to Google Cloud'
+      uses: google-github-actions/auth@v0.4.0
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -var="stage-env=${{ env.STAGE_ENVIRON }} -lock=true"
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+      run: terraform apply -auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        # Generates an execution plan for Terraform
+    - name: Preparing to destroy
+      run: echo "Running Terraform Destroy in STAGING"
+    - name: Terraform Destroy
+      id: destroy
+      run: terraform destroy -auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+  production:
+    # if: github.event.inputs.releaseType == 'prod'
+    name: Production-Terraform
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://github.com
+    needs: [ staging ]
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - id: 'auth'
+    
+      name: 'Authenticate to Google Cloud'
+      uses: google-github-actions/auth@v0.4.0
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+    # Checks that all Terraform configuration files adhere to a canonical format
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Plan
+      run: terraform plan -var="prod-env=${{ env.PROD_ENVIRON }}"
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        
+
+      # On push to main, build or change infrastructure according to Terraform configuration files
+      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/production' && github.event_name == 'push'
+      run: terraform apply -auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+        # Generates an execution plan for Terraform
+    - name: Preparing to destroy
+      run: echo "Executing Terraform Destroy in PRODUCTION"
+    - name: Terraform Destroy
+      id: destroy
+      run: terraform destroy -auto-approve
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
