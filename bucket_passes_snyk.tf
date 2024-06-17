@@ -1,8 +1,7 @@
 resource "google_storage_bucket" "snykbucket" {
-  name                     = "snyk-bucket-test"
-  location                 = var.region
-  project                  = var.project_id
-  public_access_prevention = "enforced"
+  name     = "snyk-bucket-test"
+  location = var.region
+  project  = var.project_id
 
   # Versioning block added
   versioning {
@@ -13,8 +12,8 @@ resource "google_storage_bucket" "snykbucket" {
   # google_storage_bucket.foo: Error trying to delete a bucket containing objects without `force_destroy` set to true
   # https://github.com/hashicorp/terraform-provider-google/issues/1509
 
-  force_destroy = true
-
+  force_destroy               = true
+  public_access_prevention    = "enforced"
   uniform_bucket_level_access = true
 
   encryption {
