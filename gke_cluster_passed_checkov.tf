@@ -6,16 +6,16 @@
 resource "google_container_cluster" "primary" {
   name     = "checkovtest-gke-cluster"
   location = var.region
-# https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/ensure-the-gke-metadata-server-is-enabled
-# ensure-the-gke-metadata-server-is-enabled
+  # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/ensure-the-gke-metadata-server-is-enabled
+  # ensure-the-gke-metadata-server-is-enabled
   node_config {
     workload_metadata_config {
       mode = "GKE_METADATA_SERVER"
     }
   }
 
-# GCP Kubernetes Engine private cluster has private endpoint disabled
-# https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/bc-gcp-kubernetes-6
+  # GCP Kubernetes Engine private cluster has private endpoint disabled
+  # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/bc-gcp-kubernetes-6
   private_cluster_config {
     enable_private_nodes = true
   }
