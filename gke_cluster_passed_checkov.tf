@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 # GKE cluster
+# https://github.com/terraform-google-modules/terraform-google-kubernetes-engine/issues/1024
 resource "google_container_cluster" "primary" {
   name     = "checkovtest-gke-cluster"
   location = var.region
@@ -30,6 +31,10 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
+
+  workload_metadata_config {
+    mode = GKE_METADATA
+  }
 
     labels = {
       env = var.project_id
