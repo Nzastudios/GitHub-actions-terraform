@@ -16,7 +16,9 @@ resource "google_storage_bucket" "snykbucket" {
   # https://github.com/hashicorp/terraform-provider-google/issues/1509
 
   force_destroy = true
-  # public_access_prevention = "enforced"
+
+
+  public_access_prevention = "enforced"
 
   uniform_bucket_level_access = true
 

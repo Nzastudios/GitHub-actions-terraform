@@ -21,6 +21,10 @@ resource "google_container_cluster" "primary" {
     enable_private_nodes    = true
     enable_private_endpoint = true
   }
+
+  ip_allocation_policy {
+
+  }
   # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/ensure-the-gke-metadata-server-is-enabled
 
   # We can't create a cluster with no node pool defined, but we want to only use
