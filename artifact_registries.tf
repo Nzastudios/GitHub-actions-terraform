@@ -1,4 +1,6 @@
 
+# https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/ensure-gcp-artifact-registry-repositories-are-encrypted-with-customer-supplied-encryption-keys-csek
+# GCP Artifact Registry repositories are not encrypted with Customer Supplied Encryption Keys (CSEK)
 resource "google_artifact_registry_repository" "project_florence_repo" {
   provider = google-beta
 
@@ -7,6 +9,8 @@ resource "google_artifact_registry_repository" "project_florence_repo" {
   repository_id = "platform_florence_repo"
   description   = "Artifact Registry for Improbable Defence Platform images."
   format        = "DOCKER"
+  kms_key_name  = google_kms_crypto_key.crypto-ndr-key.name
+  depends_on = [ google_kms_crypto_key.crypto-ndr-key.name ]
 }
 
 resource "google_project_iam_custom_role" "artifact_registry_policy_access" {
