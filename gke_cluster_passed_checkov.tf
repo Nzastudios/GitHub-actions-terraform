@@ -12,6 +12,8 @@ resource "google_container_cluster" "primary" {
       mode = "GKE_METADATA_SERVER"
     }
   }
+  # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/ensure-the-gke-metadata-server-is-enabled
+
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
@@ -36,6 +38,9 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
+    workload_metadata_config {
+      mode = "SECURE"
+    }
 
     labels = {
       env = var.project_id
