@@ -10,7 +10,7 @@ resource "google_artifact_registry_repository" "project_florence_repo" {
   description   = "Artifact Registry for Improbable Defence Platform images."
   format        = "DOCKER"
   kms_key_name  = google_kms_crypto_key.crypto-ndr-key.name
-  depends_on = [ google_kms_crypto_key.crypto-ndr-key.name ]
+  depends_on    = [google_kms_crypto_key.crypto-ndr-key.name]
 }
 
 resource "google_project_iam_custom_role" "artifact_registry_policy_access" {
