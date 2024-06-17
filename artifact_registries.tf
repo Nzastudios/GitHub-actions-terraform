@@ -27,6 +27,6 @@ resource "google_artifact_registry_repository_iam_member" "terraformer_gke_iam_p
   location   = google_artifact_registry_repository.project_florence_repo.location
   repository = google_artifact_registry_repository.project_florence_repo.name
   role       = google_project_iam_custom_role.artifact_registry_policy_access.name
-  member = "serviceAccount:terraform-jenkins@development-337317.iam.gserviceaccount.com"
+  member     = "serviceAccount:terraform-jenkins@development-337317.iam.gserviceaccount.com"
   #member     = "serviceAccount:${data.google_service_account.terraformer_gke.email}" # Allow terraform_gke to provision IAM rules for repository
 }
