@@ -16,12 +16,12 @@ resource "google_kms_crypto_key" "crypto-good-key" {
   key_ring = google_kms_key_ring.crypto-ndr-keyring.id
   #rotation_period = "100000s"
   rotation_period = "15552000s"
-  purpose = "ASYMMETRIC_SIGN"
+  purpose         = "ASYMMETRIC_SIGN"
 
   # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key#algorithm
 
-# Ensure prevent from deletion is set to true
-# https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/ensure-gcp-kms-keys-are-protected-from-deletion
+  # Ensure prevent from deletion is set to true
+  # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/ensure-gcp-kms-keys-are-protected-from-deletion
   lifecycle {
     prevent_destroy = true
   }
