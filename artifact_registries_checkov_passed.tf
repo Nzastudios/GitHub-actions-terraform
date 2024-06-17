@@ -9,8 +9,8 @@ resource "google_artifact_registry_repository" "project_florence_repo" {
   repository_id = "platform_florence_repo"
   description   = "Artifact Registry for Improbable Defence Platform images."
   format        = "DOCKER"
-  kms_key_name  = google_kms_crypto_key.crypto-ndr-key.name     #Add to pass checkov KMS Customer Supplied Encryption Keys (CSEK) 
-  depends_on    = [google_kms_crypto_key.crypto-ndr-key]        #Add to pass checkov KMS Customer Supplied Encryption Keys (CSEK) 
+  kms_key_name  = google_kms_crypto_key.crypto-ndr-key.name #Add to pass checkov KMS Customer Supplied Encryption Keys (CSEK) 
+  depends_on    = [google_kms_crypto_key.crypto-ndr-key]    #Add to pass checkov KMS Customer Supplied Encryption Keys (CSEK) 
 }
 
 resource "google_project_iam_custom_role" "artifact_registry_policy_access" {
