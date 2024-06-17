@@ -11,6 +11,10 @@ on:
       GOOGLE_CREDENTIALS:
         required: true
 
+# https://github.com/bridgecrewio/checkov/issues/4127
+# Check: CHECKOV fails CKV2_GHA_1: "Ensure top-level permissions are not set to write-all"
+permissions: read-all
+
 
 #  https://rtfm.co.ua/en/github-actions-deploying-dev-prod-environments-with-terraform/
 
