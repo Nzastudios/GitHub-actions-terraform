@@ -8,6 +8,10 @@ resource "google_storage_bucket" "snykbucket" {
     enabled = true
   }
 
+  # Ensure public access prevention is enforced
+  # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/bc-google-cloud-114
+  public_access_prevention = "enforced"
+
   # We want to protect this bucket. It should NEVER be deleted.
   force_destroy = false
 

@@ -9,21 +9,16 @@ resource "google_kms_key_ring" "crypto-ndr-keyring" {
   location = "global"
 }
 
-
-# https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/ensure-gcp-kms-keys-are-protected-from-deletion
-resource "google_kms_crypto_key" "crypto-good-key" {
+resource "google_kms_crypto_key" "crypto-ndr-key" {
   name     = "cryptox-lab-keyring"
   key_ring = google_kms_key_ring.crypto-ndr-keyring.id
   #rotation_period = "100000s"
-  rotation_period = "15552000s"
   purpose = "ASYMMETRIC_SIGN"
 
   # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/kms_crypto_key#algorithm
 
-# Ensure prevent from deletion is set to true
-# https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/ensure-gcp-kms-keys-are-protected-from-deletion
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
   # https://cloud.google.com/kms/docs/reference/rest/v1/CryptoKeyVersionAlgorithm
   # https://cloud.google.com/kms/docs/algorithms?authuser=2
@@ -33,18 +28,17 @@ resource "google_kms_crypto_key" "crypto-good-key" {
   }
 }
 
-# https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/ensure-that-cloud-kms-cryptokeys-are-not-anonymously-or-publicly-accessible
 resource "google_project_iam_member" "iam_encrypt_decrypt" {
   project = var.project_id
   role    = "roles/cloudkms.cryptoKeyEncrypter"
-  member  = "user:snykusertesting@nzastudios.com"
+  member  = "serviceAccount:terraform-jenkins@development-337317.iam.gserviceaccount.com"
 }
 
 resource "google_kms_crypto_key_iam_binding" "key_iam_binding" {
   crypto_key_id = resource.google_kms_crypto_key.crypto-ndr-key.id
   role          = "roles/cloudkms.cryptoKeyEncrypter"
   members = [
-    "user:snykusertesting@nzastudios.com",
+    "serviceAccount:terraform-jenkins@development-337317.iam.gserviceaccount.com",
   ]
 }
 
