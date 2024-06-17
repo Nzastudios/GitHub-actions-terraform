@@ -1,21 +1,21 @@
 locals {
-  prd_dbc_secrets = var.organization == "nzastudios.com" ? ["corelight-lic-key","jpmorgan-pwd"] : []
+  prd_dbc_secrets = var.organization == "nzastudios.com" ? ["corelight-lic-key", "jpmorgan-pwd"] : []
 }
 
 resource "google_secret_manager_secret" "license-secret" {
-  for_each = toset(local.prd_dbc_secrets)
-  provider = google-beta
-  project         = var.project_id
-  secret_id       = each.value
+  for_each  = toset(local.prd_dbc_secrets)
+  provider  = google-beta
+  project   = var.project_id
+  secret_id = each.value
 
   #   labels = {
   #   label = "snyk-secret-label"
   # }
 
-#   rotation {
-#     rotation_period = "7776000s"
-#     next_rotation_time = ""
-#   }
+  #   rotation {
+  #     rotation_period = "7776000s"
+  #     next_rotation_time = ""
+  #   }
 
   replication {
     user_managed {
@@ -28,8 +28,8 @@ resource "google_secret_manager_secret" "license-secret" {
 
 # Grant a user or service account IAM permissions to access the Corelight license secret:
 resource "google_secret_manager_secret_iam_member" "access-license-secret" {
-  for_each = google_secret_manager_secret.license-secret
-  provider = google-beta
+  for_each  = google_secret_manager_secret.license-secret
+  provider  = google-beta
   project   = each.value.project
   secret_id = each.value.secret_id
   role      = "roles/secretmanager.secretAccessor"
