@@ -7,6 +7,11 @@ resource "google_container_cluster" "primary" {
   name     = "checkovtest-gke-cluster"
   location = var.region
 
+  node_config {
+    workload_metadata_config {
+      mode = "GKE_METADATA_SERVER"
+    }
+  }
   # We can't create a cluster with no node pool defined, but we want to only use
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
@@ -31,10 +36,6 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/logging.write",
       "https://www.googleapis.com/auth/monitoring",
     ]
-
-    workload_metadata_config {
-      mode = "SECURE"
-    }
 
     labels = {
       env = var.project_id
