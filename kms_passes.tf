@@ -11,7 +11,7 @@ resource "google_kms_key_ring" "crypto-ndr-keyring" {
 
 
 # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/ensure-gcp-kms-keys-are-protected-from-deletion
-resource "google_kms_crypto_key" "crypto-good-key" {
+resource "google_kms_crypto_key" "crypto-ndr-key" {
   name     = "cryptox-lab-keyring"
   key_ring = google_kms_key_ring.crypto-ndr-keyring.id
   #rotation_period = "100000s"
