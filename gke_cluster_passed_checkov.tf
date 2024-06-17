@@ -33,7 +33,7 @@ resource "google_container_node_pool" "primary_nodes" {
     ]
 
     workload_metadata_config {
-      mode = GKE_METADATA
+      mode = "SECURE"
     }
 
     labels = {
