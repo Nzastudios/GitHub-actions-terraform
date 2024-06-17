@@ -3,10 +3,11 @@ resource "google_storage_bucket" "example_bucket" {
   location                    = var.region
   project                     = var.project_id
   uniform_bucket_level_access = true
+  
   logging {
     log_bucket = "snyklogx"
   }
 
-  public_access_prevention = "enforced"
-
 }
+
+# https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-general-policies/bc-google-cloud-114
