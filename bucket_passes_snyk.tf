@@ -1,7 +1,8 @@
 resource "google_storage_bucket" "snykbucket" {
-  name     = "snyk-bucket-test"
-  location = var.region
-  project  = var.project_id
+  name                     = "snyk-bucket-test"
+  location                 = var.region
+  project                  = var.project_id
+  public_access_prevention = "enforced"
 
   # Versioning block added
   versioning {
@@ -13,8 +14,6 @@ resource "google_storage_bucket" "snykbucket" {
   # https://github.com/hashicorp/terraform-provider-google/issues/1509
 
   force_destroy = true
-
-  public_access_prevention = "enforced"
 
   uniform_bucket_level_access = true
 
