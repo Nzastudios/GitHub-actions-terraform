@@ -4,6 +4,12 @@ variable "project_id" {
   default     = "development-337317"
 }
 
+variable "organization" {
+  description = "Path to a service account credentials file with rights to run the Google Zeek Automation. If this file is absent Terraform will fall back to Application Default Credentials."
+  type        = string
+  default     = "nzastudios.com"
+}
+
 variable "region" {
   type    = string
   default = "europe-west2"
