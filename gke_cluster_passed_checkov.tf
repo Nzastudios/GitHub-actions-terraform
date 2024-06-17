@@ -39,7 +39,7 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/monitoring",
     ]
     workload_metadata_config {
-      mode = "SECURE"
+      mode = ""
     }
 
     labels = {
