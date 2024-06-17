@@ -16,8 +16,10 @@ resource "google_container_cluster" "primary" {
 
   # GCP Kubernetes Engine private cluster has private endpoint disabled
   # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/bc-gcp-kubernetes-6
+  # https://github.com/hashicorp/terraform-provider-google/issues/7947
   private_cluster_config {
-    enable_private_nodes = true
+    enable_private_nodes    = true
+    enable_private_endpoint = true
   }
   # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/ensure-the-gke-metadata-server-is-enabled
 
