@@ -22,6 +22,10 @@ resource "google_container_cluster" "primary" {
     enable_private_endpoint = true
   }
 
+  # View internode POD level vpc log flow traffic
+  # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/enable-vpc-flow-logs-and-intranode-visibility
+  enable_intranode_visibility = true
+
   ip_allocation_policy {
 
   }

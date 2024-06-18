@@ -25,9 +25,28 @@ variable "gke_num_nodes" {
   description = "number of gke nodes"
 }
 
+# https://discuss.hashicorp.com/t/cant-find-the-example-of-release-channel-for-gke/15732
+# https://stackoverflow.com/questions/68550763/gke-terraformed-cluster-release-channel-setting
+variable "release_channel" {
+  type    = string
+  default = "STABLE"
+}
+
 variable "region" {
   type    = string
   default = "europe-west2"
+}
+
+variable "location" {
+  description = "The location (region or zone) to host the cluster in"
+  type        = string
+  default     = "europe-west2"
+}
+
+variable "env" {
+  default     = "dev"
+  description = "Environment: dev"
+  type        = string
 }
 
 variable "dev-env" {
