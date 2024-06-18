@@ -26,7 +26,7 @@ resource "google_container_cluster" "standard-cluster" {
   logging_service             = "logging.googleapis.com/kubernetes"
   monitoring_service          = "monitoring.googleapis.com/kubernetes"
   name                        = "checkov-cluster-gke"
-  network                     = "projects/${var.project_id}/global/networks/${local.ws_vars["environment"]}"
+  network                     = "projects/${var.project_id}/global/networks/checkov-dev-vpc"
   project                     = var.project_id
   subnetwork                  = "projects/${var.project_id}/regions/${var.region}/subnetworks/checkov-dev-subnet"
   # https://docs.prismacloud.io/en/enterprise-edition/policy-reference/google-cloud-policies/google-cloud-kubernetes-policies/bc-gcp-kubernetes-13
@@ -84,7 +84,7 @@ resource "google_container_cluster" "standard-cluster" {
     initial_node_count = 1
     name               = "scoped-two-cpu-high-mem-preemptible"
     node_locations = [
-      local.ws_vars["zone"],
+      var.location,
     ]
 
     autoscaling {

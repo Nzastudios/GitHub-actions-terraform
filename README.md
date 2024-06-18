@@ -6,6 +6,11 @@ Using GitHub actions and workflow
 # checkov --directory .
 
 
+# git config pull.rebase false
+# git pull origin main
+# in editor type :q
+# git push origin main
+
 
 # terraform fmt
 # Ensure Kubernetes Engine API is enabled
